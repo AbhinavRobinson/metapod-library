@@ -27,7 +27,6 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -37,23 +36,14 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String        @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
-  blog          Blog[]
-  comment       Comment[]
-  like          Like[]
-  post          Post[]
-  profile       Profile?
-  permissions   Permissions[]
 }
 
 model VerificationToken {
@@ -65,15 +55,12 @@ model VerificationToken {
 }
 
 model Blog {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   title     String
   content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  author    User      @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   authorId  String
-  comment   Comment[]
-  like      Like[]
 }
 
 model Comment {
@@ -81,9 +68,7 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
   authorId  String
-  blog      Blog     @relation(fields: [blogId], references: [id])
   blogId    String
 }
 
@@ -91,9 +76,7 @@ model Like {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
   authorId  String
-  blog      Blog     @relation(fields: [blogId], references: [id])
   blogId    String
 }
 
@@ -103,7 +86,6 @@ model Post {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
   authorId  String
 }
 
@@ -112,7 +94,6 @@ model Profile {
   bio       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
 }
 
@@ -122,5 +103,13 @@ model Permissions {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   executionLevel String
-  users     User[]
+}
+
+model PermissionsToUser {
+  A String
+  B String
+
+  @@unique([A, B], map: "_PermissionsToUser_AB_unique")
+  @@index([B], map: "_PermissionsToUser_B_index")
+  @@map("_PermissionsToUser")
 }
