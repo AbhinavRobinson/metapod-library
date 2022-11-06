@@ -48,12 +48,12 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Blog          Blog[]
-  Comment       Comment[]
-  Like          Like[]
-  Post          Post[]
-  Profile       Profile?
-  Permissions   Permissions[]
+  blog          Blog[]
+  comment       Comment[]
+  like          Like[]
+  post          Post[]
+  profile       Profile?
+  permissions   Permissions[]
 }
 
 model VerificationToken {
@@ -72,8 +72,8 @@ model Blog {
   updatedAt DateTime  @updatedAt
   author    User      @relation(fields: [authorId], references: [id])
   authorId  String
-  Comment   Comment[]
-  Like      Like[]
+  comment   Comment[]
+  like      Like[]
 }
 
 model Comment {
@@ -122,5 +122,5 @@ model Permissions {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   executionLevel String
-  permission     User[]
+  users     User[]
 }
