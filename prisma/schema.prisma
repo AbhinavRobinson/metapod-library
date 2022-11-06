@@ -122,6 +122,5 @@ model Permissions {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   executionLevel String
-  executionId    String
-  permission     User     @relation(fields: [executionId], references: [id])
+  permission     User[]
 }
