@@ -60,6 +60,26 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
         })
       );
     }
+    const perm = await prisma.permissions.findFirst({
+      where: {
+        name: Permission.Write,
+      },
+    });
+    for (let index = 0; index < adminEmails.length; index++) {
+      const element = adminEmails[index];
+      await prisma.user.update({
+        where: {
+          email: element,
+        },
+        data: {
+          permissions: {
+            set: {
+              id: perm!.id,
+            },
+          },
+        },
+      });
+    }
 
     res.send({
       content: await prisma.permissions.findMany(),
