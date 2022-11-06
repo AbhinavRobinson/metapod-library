@@ -25,6 +25,7 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerAuthSession({ req, res });
 
   if (session) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-non-null-asserted-optional-chain
     if (adminEmails.includes(session?.user?.email!)) {
       const permissions = [
         {
@@ -74,13 +75,12 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           permissions: {
             set: {
-              id: perm!.id,
+              id: perm?.id,
             },
           },
         },
       });
     }
-
     res.send({
       content: await prisma.permissions.findMany(),
     });
