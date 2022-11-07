@@ -5,14 +5,19 @@ import { SessionProvider } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
+import { useEffect } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const { data: userId } = trpc.user.getUserId.useQuery();
+  const userId = session?.user?.id;
 
-  console.log({ userId });
+  // store id as a cookie to identify unique page views (dumb views)
+  useEffect(() => {
+    if (typeof userId === "string" && userId.length > 0)
+      localStorage.setItem("userId", userId);
+  }, [userId]);
 
   return (
     <SessionProvider session={session}>
