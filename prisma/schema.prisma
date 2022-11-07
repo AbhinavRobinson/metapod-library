@@ -48,7 +48,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  blog          Blog[]
+  blog          Blog[]        @relation(name: "author")
+  visits        Visit[]       @relation(name: "visits")
   comment       Comment[]
   like          Like[]
   post          Post[]
@@ -71,10 +72,20 @@ model Blog {
   content   String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  author    User      @relation(fields: [authorId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id], name: "author")
   authorId  String
   comment   Comment[]
   like      Like[]
+  visits    Visit[]   @relation(name: "visits")
+}
+
+model Visit {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  pageUrl   String
+  blog      Blog      @relation(fields: [blogId], references: [id], name: "visits")
+  blogId    String    
+  user      User      @relation(fields: [userId], references: [id], name: "visits")
+  userId    String    
 }
 
 model Comment {
@@ -117,11 +128,11 @@ model Profile {
   userId    String   @unique
 }
 
-// model Permissions {
-//   id             String   @id @default(auto()) @map("_id") @db.ObjectId
-//   name           String
-//   createdAt      DateTime @default(now())
-//   updatedAt      DateTime @updatedAt
-//   executionLevel String
-//   users     User[]
-// }
+model Permissions {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  executionLevel String
+  // users     User[]
+}
