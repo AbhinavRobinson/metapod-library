@@ -69,16 +69,8 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
     for (let index = 0; index < adminEmails.length; index++) {
       const element = adminEmails[index];
       await prisma.user.update({
-        where: {
-          email: element,
-        },
-        data: {
-          permissions: {
-            set: {
-              id: perm?.id,
-            },
-          },
-        },
+        where: {},
+        data: {},
       });
     }
     res.send({
