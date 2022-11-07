@@ -41,19 +41,19 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String?       @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  blog          Blog[]        @relation(name: "author")
+  blog          Blog[]         @relation(name: "author")
   comment       Comment[]
   like          Like[]
   post          Post[]
   profile       Profile?
-  visits        Visit[]       @relation(name: "visits")
+  visits        Visit[]        @relation(name: "visits")
   permissions   Permissioned[] @relation(name: "permissioned")
 }
 
@@ -80,12 +80,12 @@ model Blog {
 }
 
 model Visit {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  pageUrl   String
-  blogId    String    
-  blog      Blog      @relation(fields: [blogId], references: [id], name: "visits")
-  userId    String    
-  user      User      @relation(fields: [userId], references: [id], name: "visits")
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  pageUrl String
+  blogId  String
+  blog    Blog   @relation(fields: [blogId], references: [id], name: "visits")
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], name: "visits")
 }
 
 model Comment {
@@ -129,18 +129,18 @@ model Profile {
 }
 
 model Permissions {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
   executionLevel String
-  permissioned   Permissioned[] @relation(name:"permissioned")
+  permissioned   Permissioned[] @relation(name: "permissioned")
 }
 
 model Permissioned {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
-  permissionId   String
-  permission     Permissions @relation(fields: [permissionId], references: [id], name: "permissioned")
-  userId         String    
-  user           User        @relation(fields: [userId], references: [id], name: "permissioned")
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  permissionId String
+  permission   Permissions @relation(fields: [permissionId], references: [id], name: "permissioned")
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], name: "permissioned")
 }
