@@ -53,8 +53,10 @@ model User {
   like          Like[]
   post          Post[]
   profile       Profile?
-  visits        Visit[]        @relation(name: "visits")
-  permissions   Permissioned[] @relation(name: "permissioned")
+  permissions   Permissions[]  @relation(fields: [permissionIds], references: [id])
+  permissionIds String[]       @db.ObjectId
+  visited       Blog[]         @relation(fields: [visitedIds], references: [id])
+  visitedIds    String[]       @db.ObjectId
 }
 
 model VerificationToken {
@@ -76,16 +78,8 @@ model Blog {
   author    User      @relation(fields: [authorId], references: [id], name: "author")
   comment   Comment[]
   like      Like[]
-  visits    Visit[]   @relation(name: "visits")
-}
-
-model Visit {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  pageUrl String
-  blogId  String
-  blog    Blog   @relation(fields: [blogId], references: [id], name: "visits")
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], name: "visits")
+  visits    User[]    @relation(fields: [visitIds], references: [id])
+  visitIds  String[]  @db.ObjectId
 }
 
 model Comment {
@@ -134,13 +128,6 @@ model Permissions {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   executionLevel String
-  permissioned   Permissioned[] @relation(name: "permissioned")
-}
-
-model Permissioned {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  permissionId String
-  permission   Permissions @relation(fields: [permissionId], references: [id], name: "permissioned")
-  userId       String
-  user         User        @relation(fields: [userId], references: [id], name: "permissioned")
+  users          User[]         @relation(fields: [userIds], references: [id])
+  userIds        String[]       @db.ObjectId
 }
