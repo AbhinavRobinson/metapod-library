@@ -11,6 +11,11 @@ const markdown = `
 - data: 2019-02-01
 
 <a href="#">GoTo</a>
+
+\`\`\`js
+const a = 1;
+\`\`\`
+
 `;
 
 export const RenderingEngine: React.FC = () => {
