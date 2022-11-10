@@ -1,7 +1,7 @@
-import { publicProcedure, router } from "../trpc";
-
+import { protectedProcedure, router } from "../trpc";
+import { z } from "zod";
 export const blogRouter = router({
-  initialize: publicProcedure.query(async ({ ctx }) => {
+  addBlog: protectedProcedure.input(z.object({})).query(async ({ ctx }) => {
     return {};
   }),
 });

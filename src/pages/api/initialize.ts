@@ -1,21 +1,8 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
+import { ExecutionLevel, Permission } from "../../env/commons";
 
 import { getServerAuthSession } from "../../server/common/get-server-auth-session";
 import { prisma } from "../../server/db/client";
-
-enum Permission {
-  Read = "read",
-  Comment = "comment",
-  Like = "like",
-  Write = "write",
-  Sudo = "sudo",
-}
-enum ExecutionLevel {
-  Public = "public",
-  LoggedIn = "logged-in",
-  Author = "author",
-  Admin = "admin",
-}
 
 const adminEmails = [
   "8.aniket.chowdhury@gmail.com",
