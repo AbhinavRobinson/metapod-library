@@ -40,7 +40,7 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  **/
 export const protectedProcedure = t.procedure.use(isAuthed);
 
-const isAdmin = t.middleware(async ({ ctx, next }) => {
+const isAdminOrWriter = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
@@ -81,4 +81,4 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
   });
 });
 
-export const adminOrWriteProcedure = t.procedure.use(isAdmin);
+export const adminOrWriteProcedure = t.procedure.use(isAdminOrWriter);
