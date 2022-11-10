@@ -1,4 +1,6 @@
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 
 const markdown = `
 # Some Blog Header
@@ -7,12 +9,17 @@ const markdown = `
 
 - data: 2019-01-01
 - data: 2019-02-01
+
+<a href="#">GoTo</a>
 `;
+
 export const RenderingEngine: React.FC = () => {
   return (
     <>
-      <div className="prose prose-headings:underline prose-a:text-blue-600 prose-img:rounded-xl">
-        <ReactMarkdown>{markdown}</ReactMarkdown>
+      <div className="prose prose-a:text-blue-600 prose-img:rounded-xl">
+        <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>
+          {markdown}
+        </ReactMarkdown>
       </div>
     </>
   );
