@@ -2,6 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ExecutionLevel, Permission } from "../../env/commons";
 import { prisma } from "../../server/db/client";
+import type { Prisma } from "@prisma/client";
 
 import { type Context } from "./context";
 
@@ -40,7 +41,6 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  **/
 export const protectedProcedure = t.procedure.use(isAuthed);
 
-import type { Prisma } from "@prisma/client";
 const withPermissions = ({
   validPermissions,
 }: {
