@@ -1,4 +1,3 @@
-import { readFileSync } from "fs";
 import { InferGetServerSidePropsType } from "next";
 import React from "react";
 import { RenderingEngine } from "../../../components/RenderingEngine";
@@ -22,7 +21,7 @@ const Blog: React.FC<
   return (
     <>
       {status && (
-        <div className="grid place-content-center pt-10">
+        <div className="p grid place-content-center">
           <RenderingEngine markdown={data} />
         </div>
       )}
