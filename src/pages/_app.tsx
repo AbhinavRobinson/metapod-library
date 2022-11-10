@@ -5,19 +5,20 @@ import { SessionProvider } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
-import { useEffect } from "react";
+// import { useEffect } from "react";
+// import { useRouter } from "next/router";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const userId = session?.user?.id;
+  // const router = useRouter();
+  // const postVisit = trpc.user
 
-  // store id as a cookie to identify unique page views (dumb views)
-  useEffect(() => {
-    if (typeof userId === "string" && userId.length > 0)
-      localStorage.setItem("userId", userId);
-  }, [userId]);
+  // useEffect(() => {
+  //   if (router.asPath && session?.user?.id) {
+  //   }
+  // }, [router.asPath, session?.user?.id]);
 
   return (
     <SessionProvider session={session}>

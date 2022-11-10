@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   return (
@@ -22,6 +23,8 @@ export default Home;
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
+  const createBlog = trpc.user.logVisit.useMutation();
+
   return (
     <div className="flex flex-col items-center justify-center gap-2">
       {!sessionData && (
@@ -33,10 +36,22 @@ const AuthShowcase: React.FC = () => {
         </p>
       )}
       <button
-        className="rounded-md border px-3 py-2 text-xl text-white shadow-lg"
+        className="rounded-md border px-3 py-2 text-xl text-white"
         onClick={sessionData ? () => signOut() : () => signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
+      </button>
+      <button
+        type="button"
+        className="rounded-md border px-3 py-2 text-xl text-white"
+        onClick={() => {
+          createBlog.mutate({
+            title: `Test Blog by ${sessionData?.user?.email}`,
+            content: `Testing blog by admin ${sessionData?.user?.name}`,
+          });
+        }}
+      >
+        Create Blog
       </button>
     </div>
   );
