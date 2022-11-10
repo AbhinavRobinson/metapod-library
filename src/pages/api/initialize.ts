@@ -8,6 +8,7 @@ enum Permission {
   Comment = "comment",
   Like = "like",
   Write = "write",
+  Sudo = "sudo",
 }
 enum ExecutionLevel {
   Public = "public",
@@ -44,6 +45,10 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
           name: Permission.Write,
           executionLevel: ExecutionLevel.Author,
         },
+        {
+          name: Permission.Sudo,
+          executionLevel: ExecutionLevel.Admin,
+        },
       ];
 
       await Promise.all(
@@ -63,14 +68,22 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     const perm = await prisma.permissions.findFirst({
       where: {
-        name: Permission.Write,
+        name: Permission.Sudo,
       },
     });
     for (let index = 0; index < adminEmails.length; index++) {
       const element = adminEmails[index];
       await prisma.user.update({
-        where: {},
-        data: {},
+        where: {
+          email: element,
+        },
+        data: {
+          permissions: {
+            connect: {
+              id: perm?.id,
+            },
+          },
+        },
       });
     }
     res.send({
