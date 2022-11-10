@@ -3,7 +3,7 @@ import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
-  logVisit: publicProcedure
+  createBlog: publicProcedure
     .input(
       z.object({
         title: z.string(),
@@ -28,4 +28,10 @@ export const userRouter = router({
       };
       return ctx.prisma.blog.create({ data: blog });
     }),
+  getBlogs: publicProcedure.query(async ({ ctx }) => {
+    await ctx.prisma.$connect();
+    return ctx.prisma.blog.findMany({
+      where: { authorId: ctx.session?.user?.id },
+    });
+  }),
 });

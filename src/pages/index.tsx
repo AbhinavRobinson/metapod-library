@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
   return (
@@ -23,7 +24,14 @@ export default Home;
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
-  const createBlog = trpc.user.logVisit.useMutation();
+  const createBlog = trpc.user.createBlog.useMutation();
+  const getBlogs = trpc.user.getBlogs.useQuery();
+
+  useEffect(() => {
+    if (sessionData?.user?.id) {
+      getBlogs.refetch();
+    }
+  }, [getBlogs, sessionData?.user?.id]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -53,6 +61,12 @@ const AuthShowcase: React.FC = () => {
       >
         Create Blog
       </button>
+      {getBlogs.data?.map((blog, i) => (
+        <div key={blog.id}>
+          {i} --- {blog.title} --- {blog.content} ---{" "}
+          {blog.createdAt.toTimeString()}
+        </div>
+      ))}
     </div>
   );
 };
