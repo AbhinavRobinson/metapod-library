@@ -8,7 +8,6 @@ const SignIn = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(providers);
 
   useEffect(() => {
     if (session) {
@@ -16,6 +15,7 @@ const SignIn = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
+
   return (
     <>
       <section className="grid min-h-screen w-full place-content-center gap-2 bg-black text-center text-white">
