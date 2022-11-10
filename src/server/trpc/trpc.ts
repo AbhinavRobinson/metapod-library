@@ -40,45 +40,55 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  **/
 export const protectedProcedure = t.procedure.use(isAuthed);
 
-const isAdmin = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  const user = await prisma.user.findFirst({
-    where: {
-      email: ctx.session.user.email,
-    },
+import type { Prisma } from "@prisma/client";
+const withPermissions = ({
+  validPermissions,
+}: {
+  validPermissions: Prisma.Enumerable<Prisma.PermissionsWhereInput>;
+}) =>
+  t.middleware(async ({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        email: ctx.session.user.email,
+      },
+    });
+
+    const perms = await prisma.permissions.findMany({
+      where: {
+        OR: validPermissions,
+      },
+    });
+
+    const commons = perms
+      .map((perm) => perm.id.toString())
+      .filter((value) =>
+        user?.permissionIds.map((u) => u.toString()).includes(value)
+      );
+
+    if (commons.length === 0) {
+      throw new TRPCError({ code: "FORBIDDEN" });
+    }
+
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
   });
 
-  const perms = await prisma.permissions.findMany({
-    where: {
-      OR: [
-        {
-          executionLevel: ExecutionLevel.Admin,
-        },
-        {
-          name: Permission.Write,
-        },
-      ],
-    },
-  });
-
-  const commons = perms
-    .map((perm) => perm.id.toString())
-    .filter((value) =>
-      user?.permissionIds.map((u) => u.toString()).includes(value)
-    );
-
-  if (commons.length === 0) {
-    throw new TRPCError({ code: "FORBIDDEN" });
-  }
-
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
-    },
-  });
-});
-
-export const adminOrWriteProcedure = t.procedure.use(isAdmin);
+export const adminOrWriterProcedure = t.procedure.use(
+  withPermissions({
+    validPermissions: [
+      {
+        executionLevel: ExecutionLevel.Admin,
+      },
+      {
+        name: Permission.Write,
+      },
+    ],
+  })
+);
