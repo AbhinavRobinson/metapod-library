@@ -8,12 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String
@@ -41,20 +35,22 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String?        @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  blog          Blog[]         @relation(name: "author")
+  blog          Blog[]        @relation(name: "author")
   comment       Comment[]
   like          Like[]
   post          Post[]
   profile       Profile?
-  visits        Visit[]        @relation(name: "visits")
-  permissions   Permissioned[] @relation(name: "permissioned")
+  permissions   Permissions[] @relation(fields: [permissionIds], references: [id])
+  permissionIds String[]      @db.ObjectId
+  visited       Blog[]        @relation(fields: [visitedIds], references: [id])
+  visitedIds    String[]      @db.ObjectId
 }
 
 model VerificationToken {
@@ -76,16 +72,8 @@ model Blog {
   author    User      @relation(fields: [authorId], references: [id], name: "author")
   comment   Comment[]
   like      Like[]
-  visits    Visit[]   @relation(name: "visits")
-}
-
-model Visit {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  pageUrl String
-  blogId  String
-  blog    Blog   @relation(fields: [blogId], references: [id], name: "visits")
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], name: "visits")
+  visits    User[]    @relation(fields: [visitIds], references: [id])
+  visitIds  String[]  @db.ObjectId
 }
 
 model Comment {
@@ -129,18 +117,11 @@ model Profile {
 }
 
 model Permissions {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   executionLevel String
-  permissioned   Permissioned[] @relation(name: "permissioned")
-}
-
-model Permissioned {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  permissionId String
-  permission   Permissions @relation(fields: [permissionId], references: [id], name: "permissioned")
-  userId       String
-  user         User        @relation(fields: [userId], references: [id], name: "permissioned")
+  users          User[]   @relation(fields: [userIds], references: [id])
+  userIds        String[] @db.ObjectId
 }
