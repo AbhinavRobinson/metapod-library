@@ -11,7 +11,6 @@ export const userRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.prisma.$connect();
       const blog: Prisma.BlogCreateInput = {
         title: input.title,
         content: input.content,
@@ -26,11 +25,10 @@ export const userRouter = router({
           },
         },
       };
-      return ctx.prisma.blog.create({ data: blog });
+      return prisma?.blog.create({ data: blog });
     }),
   getBlogs: publicProcedure.query(async ({ ctx }) => {
-    await ctx.prisma.$connect();
-    return ctx.prisma.blog.findMany({
+    return prisma?.blog.findMany({
       where: { authorId: ctx.session?.user?.id },
     });
   }),
