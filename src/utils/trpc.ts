@@ -12,7 +12,7 @@ const getBaseUrl = () => {
 };
 
 export const trpc = createTRPCNext<AppRouter>({
-  config({ ctx }) {
+  config() {
     return {
       abortOnUnmount: true,
       transformer: superjson,
