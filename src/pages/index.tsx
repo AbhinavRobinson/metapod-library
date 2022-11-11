@@ -25,13 +25,13 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   const createBlog = trpc.user.createBlog.useMutation();
-  const getBlogs = trpc.user.getBlogs.useQuery();
+  const { refetch, data } = trpc.user.getBlogs.useQuery();
 
   useEffect(() => {
     if (sessionData?.user?.id) {
-      getBlogs.refetch();
+      refetch();
     }
-  }, [getBlogs, sessionData?.user?.id]);
+  }, [refetch, sessionData?.user?.id]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2">
@@ -61,7 +61,7 @@ const AuthShowcase: React.FC = () => {
       >
         Create Blog
       </button>
-      {getBlogs.data?.map((blog, i) => (
+      {data?.map((blog, i) => (
         <div key={blog.id}>
           {i} --- {blog.title} --- {blog.content} ---{" "}
           {blog.createdAt.toTimeString()}
