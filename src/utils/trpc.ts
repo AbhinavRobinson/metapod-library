@@ -14,6 +14,7 @@ const getBaseUrl = () => {
 export const trpc = createTRPCNext<AppRouter>({
   config({ ctx }) {
     return {
+      abortOnUnmount: true,
       transformer: superjson,
       queryClientConfig: {
         defaultOptions: {
