@@ -28,8 +28,10 @@ export const userRouter = router({
       return prisma?.blog.create({ data: blog });
     }),
   getBlogs: publicProcedure.query(async ({ ctx }) => {
-    return prisma?.blog.findMany({
-      where: { authorId: ctx.session?.user?.id },
-    });
+    if (ctx.session?.user?.id.length)
+      return prisma?.blog.findMany({
+        where: { authorId: ctx.session?.user?.id },
+      });
+    return null;
   }),
 });
