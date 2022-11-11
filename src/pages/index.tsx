@@ -25,9 +25,7 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   const createBlog = trpc.user.createBlog.useMutation();
-  const { refetch, data } = trpc.user.getBlogs.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-  });
+  const { refetch, data } = trpc.user.getBlogs.useQuery();
 
   useEffect(() => {
     if (sessionData?.user?.id) {
