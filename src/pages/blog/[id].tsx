@@ -1,11 +1,16 @@
-import { InferGetServerSidePropsType } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import React from "react";
 import { RenderingEngine } from "../../../components/RenderingEngine";
 
 // get server side props
-export const getServerSideProps = async (context: any) => {
-  const { id } = context.params;
-  const res = await fetch(new URL(`/blogs/${id}.md`, process.env.NEXTAUTH_URL));
+export const getServerSideProps: GetServerSideProps<
+  { data: string; status: boolean },
+  { id: string }
+> = async (context) => {
+  const params = context.params;
+  const res = await fetch(
+    new URL(`/blogs/${params?.id}.md`, process.env.NEXTAUTH_URL)
+  );
 
   return {
     props: {
