@@ -50,11 +50,6 @@ const withPermissions = ({
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
-    const user = await prisma.user.findFirst({
-      where: {
-        email: ctx.session.user.email,
-      },
-    });
 
     const perms = await prisma.permissions.findMany({
       where: {
@@ -62,13 +57,20 @@ const withPermissions = ({
       },
     });
 
-    const commons = perms
-      .map((perm) => perm.id.toString())
-      .filter((value) =>
-        user?.permissionIds.map((u) => u.toString()).includes(value)
-      );
+    const user = await prisma.user.findFirst({
+      where: {
+        email: ctx.session.user.email,
+        permissions: {
+          some: {
+            OR: perms.map((p) => ({
+              id: p.id,
+            })),
+          },
+        },
+      },
+    });
 
-    if (commons.length === 0) {
+    if (!user) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
 
