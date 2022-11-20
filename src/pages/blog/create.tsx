@@ -54,7 +54,10 @@ const Create: React.FC<
           />
           <RenderingEngine markdown={markdown} />
         </div>
-        <button className="rounded-md border px-3 py-2 text-xl text-black">
+        <button
+          onClick={() => {}}
+          className="rounded-md border px-3 py-2 text-xl text-black"
+        >
           Create a Blog
         </button>
       </>
