@@ -19,11 +19,6 @@ export const userRouter = router({
             id: ctx.session?.user?.id,
           },
         },
-        visits: {
-          connect: {
-            id: ctx.session?.user?.id,
-          },
-        },
       };
       return prisma?.blog.create({ data: blog });
     }),

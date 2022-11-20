@@ -60,11 +60,20 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     for (let index = 0; index < adminEmails.length; index++) {
       const element = adminEmails[index];
-      await prisma.user.update({
+
+      await prisma.user.upsert({
         where: {
           email: element,
         },
-        data: {
+        create: {
+          email: element,
+          permissions: {
+            connect: {
+              id: perm?.id,
+            },
+          },
+        },
+        update: {
           permissions: {
             connect: {
               id: perm?.id,
@@ -74,12 +83,14 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
     res.send({
-      content: await prisma.permissions.findMany(),
-    });
-  } else {
-    res.send({
-      error:
-        "You must be signed in to view the protected content on this page.",
+      content: await prisma.user.findMany({
+        where: {
+          email: { in: adminEmails },
+        },
+        include: {
+          permissions: true,
+        },
+      }),
     });
   }
 };

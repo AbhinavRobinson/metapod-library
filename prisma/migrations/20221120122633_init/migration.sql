@@ -88,18 +88,6 @@ CREATE TABLE `Like` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Post` (
-    `id` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-    `authorId` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `Profile` (
     `id` VARCHAR(191) NOT NULL,
     `bio` VARCHAR(191) NOT NULL,
@@ -123,19 +111,10 @@ CREATE TABLE `Permissions` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_BlogToUser` (
-    `A` VARCHAR(191) NOT NULL,
-    `B` VARCHAR(191) NOT NULL,
-
-    INDEX `_BlogToUser_B_index`(`B`),
-    UNIQUE INDEX `_BlogToUser_AB_unique`(`A`, `B`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `_PermissionsToUser` (
     `A` VARCHAR(191) NOT NULL,
     `B` VARCHAR(191) NOT NULL,
 
-    INDEX `_PermissionsToUser_B_index`(`B`),
-    UNIQUE INDEX `_PermissionsToUser_AB_unique`(`A`, `B`)
+    UNIQUE INDEX `_PermissionsToUser_AB_unique`(`A`, `B`),
+    INDEX `_PermissionsToUser_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
