@@ -65,14 +65,7 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
         where: {
           email: element,
         },
-        create: {
-          email: element,
-          permissions: {
-            connect: {
-              id: perm?.id,
-            },
-          },
-        },
+        create: {},
         update: {
           permissions: {
             connect: {

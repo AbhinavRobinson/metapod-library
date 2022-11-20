@@ -1,7 +1,26 @@
-import { protectedProcedure, router } from "../trpc";
+import { adminOrWriterProcedure, router } from "../trpc";
 import { z } from "zod";
+import { prisma } from "../../../server/db/client";
+
 export const blogRouter = router({
-  addBlog: protectedProcedure.input(z.object({})).query(async () => {
-    return {};
-  }),
+  createBlog: adminOrWriterProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        content: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return prisma.blog.create({
+        data: {
+          title: input.title,
+          content: input.content,
+          author: {
+            connect: {
+              id: ctx.session?.user?.id,
+            },
+          },
+        },
+      });
+    }),
 });

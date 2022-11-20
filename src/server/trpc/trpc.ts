@@ -55,26 +55,25 @@ const withPermissions = ({
       where: {
         email: ctx.session.user.email,
       },
-    });
-
-    const perms = await prisma.permissions.findFirst({
-      where: {
-        OR: validPermissions,
+      include: {
+        permissions: true,
       },
     });
 
-    const commons = await prisma.permissionsToUser.findMany({
-      where: {
-        OR: [
-          {
-            A: user?.id,
+    const permissions = new Set(
+      (
+        await prisma.permissions.findMany({
+          where: {
+            OR: validPermissions,
           },
-          { B: perms?.id },
-        ],
-      },
-    });
+        })
+      ).map((e) => e.id)
+    );
 
-    if (commons.length === 0) {
+    if (
+      user!.permissions.map((e) => e.id).filter((e) => permissions.has(e))
+        .length === 0
+    ) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
 
@@ -89,6 +88,9 @@ const withPermissions = ({
 export const adminOrWriterProcedure = t.procedure.use(
   withPermissions({
     validPermissions: [
+      {
+        executionLevel: Permission.Sudo,
+      },
       {
         executionLevel: ExecutionLevel.Admin,
       },

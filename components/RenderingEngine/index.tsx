@@ -7,7 +7,7 @@ export const RenderingEngine: React.FC<{ markdown: string }> = ({
 }) => {
   return (
     <>
-      <div className="prose prose-a:text-blue-600 prose-img:rounded-xl">
+      <div className="prose w-full prose-a:text-blue-600 prose-img:rounded-xl">
         <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]}>
           {markdown}
         </ReactMarkdown>

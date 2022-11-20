@@ -1,27 +1,10 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc";
+import { Permission } from "../../../env/commons";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
-  createBlog: publicProcedure
-    .input(
-      z.object({
-        title: z.string(),
-        content: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const blog: Prisma.BlogCreateInput = {
-        title: input.title,
-        content: input.content,
-        author: {
-          connect: {
-            id: ctx.session?.user?.id,
-          },
-        },
-      };
-      return prisma?.blog.create({ data: blog });
-    }),
+  isWriter: protectedProcedure.query(isWriter()),
   getBlogs: publicProcedure.query(async ({ ctx }) => {
     if (ctx.session?.user?.id.length)
       return prisma?.blog.findMany({
@@ -30,3 +13,24 @@ export const userRouter = router({
     return null;
   }),
 });
+
+function isWriter() {
+  return async ({ ctx }: any) => {
+    if (ctx.session?.user?.id.length)
+      return (
+        (
+          (await prisma?.permissions.findMany({
+            where: {
+              user: {
+                some: {
+                  id: ctx.session.user.id,
+                },
+              },
+              name: { in: [Permission.Write, Permission.Sudo] },
+            },
+          })) || []
+        ).length > 0
+      );
+    return false;
+  };
+}
