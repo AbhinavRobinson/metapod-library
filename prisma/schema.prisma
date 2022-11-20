@@ -70,6 +70,9 @@ model Blog {
   author    User      @relation("author", fields: [authorId], references: [id])
   comment   Comment[]
   like      Like[]
+
+  published Boolean  @default(false)
+
 }
 
 model Comment {
