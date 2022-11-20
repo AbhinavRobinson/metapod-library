@@ -61,19 +61,21 @@ const restricted = async (req: NextApiRequest, res: NextApiResponse) => {
     for (let index = 0; index < adminEmails.length; index++) {
       const element = adminEmails[index];
 
-      await prisma.user.upsert({
-        where: {
-          email: element,
-        },
-        create: {},
-        update: {
-          permissions: {
-            connect: {
-              id: perm?.id,
+      if (await prisma.user.findFirst({ where: { email: element } })) {
+        await prisma.user.upsert({
+          where: {
+            email: element,
+          },
+          create: {},
+          update: {
+            permissions: {
+              connect: {
+                id: perm?.id,
+              },
             },
           },
-        },
-      });
+        });
+      }
     }
     res.send({
       content: await prisma.user.findMany({
