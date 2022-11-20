@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { Permission } from "../../../env/commons";
+import { ExecutionLevel, Permission } from "../../../env/commons";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const userRouter = router({
@@ -27,6 +27,9 @@ function isWriter() {
                 },
               },
               name: { in: [Permission.Write, Permission.Sudo] },
+              executionLevel: {
+                in: [ExecutionLevel.Admin, ExecutionLevel.Author],
+              },
             },
           })) || []
         ).length > 0
