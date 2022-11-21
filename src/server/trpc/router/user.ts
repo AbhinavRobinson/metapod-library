@@ -22,7 +22,7 @@ export const userRouter = router({
     if (ctx.session?.user?.id.length)
       return (
         (await prisma?.blog.findMany({
-          where: { authorId: ctx.session?.user?.id },
+          where: {},
           include: { author: true, editors: true },
         })) ?? []
       );
