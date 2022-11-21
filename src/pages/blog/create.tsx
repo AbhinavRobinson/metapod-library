@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { RenderingEngine } from "../../../components/RenderingEngine";
 import { trpc } from "../../utils/trpc";
@@ -6,7 +7,7 @@ import { trpc } from "../../utils/trpc";
 export const getServerSideProps: GetServerSideProps<
   { data: string; status: boolean },
   { id: string }
-> = async (context) => {
+> = async () => {
   const res = await fetch(
     new URL(`/blogs/example.md`, process.env.NEXTAUTH_URL)
   );
@@ -22,11 +23,17 @@ export const getServerSideProps: GetServerSideProps<
 const Create: React.FC<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ data }) => {
-  const [{ markdown }, setData] = useState<{ markdown: string }>({
+  const [{ markdown, title }, setData] = useState<{
+    markdown: string;
+    title: string;
+  }>({
+    title: "",
     markdown: data,
   });
-
+  const { push } = useRouter();
   const { status, data: isWriter } = trpc.user.isWriter.useQuery();
+
+  const blogs = trpc.blog.createBlog.useMutation();
 
   if (status === "success" && isWriter) {
     return (
@@ -55,7 +62,13 @@ const Create: React.FC<
           <RenderingEngine markdown={markdown} />
         </div>
         <button
-          onClick={() => {}}
+          onClick={async () => {
+            await blogs.mutateAsync({
+              title: title,
+              content: markdown,
+            });
+            push("/");
+          }}
           className="rounded-md border px-3 py-2 text-xl text-black"
         >
           Create a Blog

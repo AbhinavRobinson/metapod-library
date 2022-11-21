@@ -66,7 +66,7 @@ model VerificationToken {
 model Blog {
   id        String    @id @default(cuid())
   title     String
-  content   String
+  content   String    @db.Text
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   authorId  String

@@ -8,7 +8,7 @@ export const userRouter = router({
   getBlogs: publicProcedure.query(async ({ ctx }) => {
     if (ctx.session?.user?.id.length)
       return prisma?.blog.findMany({
-        where: { authorId: ctx.session?.user?.id },
+        where: { authorId: ctx.session?.user?.id, published: true },
       });
     return null;
   }),
