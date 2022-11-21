@@ -1,4 +1,4 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { RenderingEngine } from "../../../components/RenderingEngine";
@@ -76,7 +76,7 @@ const Create: React.FC<
       </>
     );
   }
-  return <>404</>;
+  return <>No blogs found...</>;
 };
 
 export default Create;

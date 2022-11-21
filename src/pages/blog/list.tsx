@@ -16,7 +16,7 @@ const List: React.FC = () => {
     if (status === "success") {
       refetch();
     }
-  }, [status]);
+  }, [refetch, status]);
 
   return (
     <>

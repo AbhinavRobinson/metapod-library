@@ -32,7 +32,7 @@ const Blog: React.FC<
       )}
       {!status && (
         <div className="prose">
-          <h1>404</h1>
+          <h1>Blog with name not found.</h1>
         </div>
       )}
     </>
