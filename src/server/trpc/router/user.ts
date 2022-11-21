@@ -1,16 +1,33 @@
-import type { Prisma } from "@prisma/client";
-import { z } from "zod";
 import { ExecutionLevel, Permission } from "../../../env/commons";
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import {
+  adminOrWriterProcedure,
+  protectedProcedure,
+  publicProcedure,
+  router,
+} from "../trpc";
 
 export const userRouter = router({
   isWriter: protectedProcedure.query(isWriter()),
   getBlogs: publicProcedure.query(async ({ ctx }) => {
     if (ctx.session?.user?.id.length)
-      return prisma?.blog.findMany({
-        where: { authorId: ctx.session?.user?.id, published: true },
-      });
-    return null;
+      return (
+        (await prisma?.blog.findMany({
+          where: { authorId: ctx.session?.user?.id, published: true },
+        })) ?? []
+      );
+
+    return [];
+  }),
+  getAllBlogs: adminOrWriterProcedure.query(async ({ ctx }) => {
+    if (ctx.session?.user?.id.length)
+      return (
+        (await prisma?.blog.findMany({
+          where: { authorId: ctx.session?.user?.id },
+          include: { author: true, editors: true },
+        })) ?? []
+      );
+
+    return [];
   }),
 });
 
